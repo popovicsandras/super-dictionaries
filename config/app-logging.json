@@ -1,0 +1,16 @@
+{
+    "reloadSecs": 60,
+    "appenders": [{
+            "type": "console",
+            "layout": {
+                "type": "pattern",
+                "pattern": "%m"
+            },
+            "category": "app"
+        }
+    ],
+    "levels": {
+        "[all]": "INFO",
+        "app": "DEBUG"
+    }
+}
