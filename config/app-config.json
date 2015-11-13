@@ -1,3 +1,6 @@
 {
-  "port": 9001
+  "port": 9001,
+  "database": {
+    "url": "test"
+  }
 }

@@ -3,6 +3,7 @@
 var http = require('http');
 var VersionAPI = require('./admin/VersionAPI');
 var Healthcheck = require('./admin/HealthcheckAPI');
+var CreateUpdate = require('./dictionaries/CreateUpdate');
 
 var log = require('log4js-config').get('app');
 
@@ -14,6 +15,7 @@ class Service {
         this.configuration = configuration;
         this.versionAPI  = versionAPI || new VersionAPI();
         this.healthcheckAPI = healthcheckAPI || new Healthcheck(this.configuration);
+        this.createUpdate = new CreateUpdate();
     }
 
     start(app) {
@@ -31,6 +33,7 @@ class Service {
 
         this.versionAPI.install(app);
         this.healthcheckAPI.install(app);
+        this.createUpdate.install(app);
 
         var port = this.configuration.port;
         var server = http.createServer(app);
