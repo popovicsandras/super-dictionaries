@@ -39,11 +39,6 @@ class CreateUpdate{
     _respond(response) {
         response.status(200).end();
     }
-
-    //getCollection() {
-    //    var db = require('monk')('localhost:27777/super-dictionaries');
-    //    return db.get('dictionaries');
-    //}
 }
 
 module.exports = CreateUpdate;

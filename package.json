@@ -9,6 +9,7 @@
     "test": "export NODE_ENV=app-config; mocha 'test/setup.js' 'test/**/**.spec.js'"
   },
   "dependencies": {
+    "@workshare/nodejs-cirrus-auth": "0.0.3",
     "async": "^1.4.2",
     "body-parser": "^1.14.1",
     "config": "^1.16.0",

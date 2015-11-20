@@ -1,16 +1,26 @@
 {
-    "reloadSecs": 60,
-    "appenders": [{
-            "type": "console",
-            "layout": {
-                "type": "pattern",
-                "pattern": "%m"
-            },
-            "category": "app"
-        }
-    ],
-    "levels": {
-        "[all]": "INFO",
-        "app": "DEBUG"
+  "reloadSecs": 60,
+  "appenders": [
+    {
+      "type": "console",
+      "layout": {
+        "type": "pattern",
+        "pattern": "%m"
+      },
+      "category": "app"
+    },
+    {
+      "type": "console",
+      "layout": {
+        "type": "pattern",
+        "pattern": "%m"
+      },
+      "category": "cirrus.middleware"
     }
+  ],
+  "levels": {
+    "[all]": "INFO",
+    "app": "DEBUG",
+    "cirrus.middleware": "DEBUG"
+  }
 }
