@@ -6,7 +6,7 @@ var Healthcheck = require('./admin/HealthcheckAPI');
 var CreateUpdate = require('./dictionaries/CreateUpdate');
 var Cirrus = require('@workshare/nodejs-cirrus-auth');
 
-var log = require('log4js-config').get('app');
+var log4js = require('log4js-config');
 
 var swaggerUiMiddleware = require('swagger-ui-middleware');
 
@@ -18,17 +18,52 @@ class HelloEndpoint {
     }
 }
 
+
+class Log4jsConfigLoggerFactory {
+    get (name) {
+        return require('log4js-config').get(name);
+    }
+}
+
+class LoggerFactory {
+    var logger = new Logger();
+
+    get (name) {
+        return logger;
+    }
+}
+
+class Logger {
+    debug (args) {
+    }
+
+    info (args) {
+    }
+
+    warning (args) {
+    }
+
+    error (args) {
+    }
+
+    fatal (args) {
+    }
+}
+
 class Service {
 
-    constructor(configuration, options) {
-        this.configuration = configuration;
-        this.versionAPI  = options.versionAPI || new VersionAPI();
-        this.healthcheckAPI = options.healthcheckAPI || new Healthcheck(this.configuration);
-        this.cirrusMiddleware = options.cirrusMiddleware || new Cirrus.Middleware(this.configuration);
-        this.createUpdate = options.createUpdate || new CreateUpdate(this.configuration);
-        this.delete = options.delete || new HelloEndpoint();
-        this.get = options.get || new HelloEndpoint();
-        this.list = options.list || new HelloEndpoint();
+    constructor(config, options) {
+
+        options.loggerFactory = options.loggerFactory || new LoggerFactory();
+
+        this.versionAPI  = options.versionAPI || new VersionAPI(config, options);
+        this.healthcheckAPI = options.healthcheckAPI || new Healthcheck(config, options);
+        this.cirrusMiddleware = options.cirrusMiddleware || new Cirrus.Middleware(config, options);
+
+        this.createUpdate = options.createUpdate || new CreateUpdate(config, options);
+        this.delete = options.delete || new HelloEndpoint(config, options);
+        this.get = options.get || new HelloEndpoint(config, options);
+        this.list = options.list || new HelloEndpoint(config, options);
     }
 
     start(app) {
