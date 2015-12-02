@@ -28,6 +28,9 @@ class Service {
 
         options.loggerFactory = options.loggerFactory || new wsLogger.Log4jsConfigLoggerFactory();
 
+    	this.options = options;
+    	this.configuration = config;
+
         this.versionAPI  = options.versionAPI || new VersionAPI(config, options);
         this.healthcheckAPI = options.healthcheckAPI || new Healthcheck(config, options);
         this.cirrusMiddleware = options.cirrusMiddleware || new Cirrus.Middleware(config, options);
@@ -39,6 +42,8 @@ class Service {
     }
 
     start(app) {
+    	var log = this.options.loggerFactory.get("Service");
+
         // how do we test this?
         var cookieParser = require('cookie-parser');
         app.use(cookieParser());
