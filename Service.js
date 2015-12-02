@@ -1,12 +1,13 @@
 'use strict';
 
 var http = require('http');
+
 var VersionAPI = require('./admin/VersionAPI');
 var Healthcheck = require('./admin/HealthcheckAPI');
 var CreateUpdate = require('./dictionaries/CreateUpdate');
 var Cirrus = require('@workshare/nodejs-cirrus-auth');
 
-var log4js = require('log4js-config');
+var wsLogger = require('@workshare/ws-logger');
 
 var swaggerUiMiddleware = require('swagger-ui-middleware');
 
@@ -19,42 +20,13 @@ class HelloEndpoint {
 }
 
 
-class Log4jsConfigLoggerFactory {
-    get (name) {
-        return require('log4js-config').get(name);
-    }
-}
 
-class LoggerFactory {
-    var logger = new Logger();
-
-    get (name) {
-        return logger;
-    }
-}
-
-class Logger {
-    debug (args) {
-    }
-
-    info (args) {
-    }
-
-    warning (args) {
-    }
-
-    error (args) {
-    }
-
-    fatal (args) {
-    }
-}
 
 class Service {
 
     constructor(config, options) {
 
-        options.loggerFactory = options.loggerFactory || new LoggerFactory();
+        options.loggerFactory = options.loggerFactory || new wsLogger.Log4jsConfigLoggerFactory();
 
         this.versionAPI  = options.versionAPI || new VersionAPI(config, options);
         this.healthcheckAPI = options.healthcheckAPI || new Healthcheck(config, options);

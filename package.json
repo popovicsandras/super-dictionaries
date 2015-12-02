@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@workshare/nodejs-cirrus-auth": "0.0.3",
+    "@workshare/ws-logger": "0.0.1",
     "async": "^1.4.2",
     "body-parser": "^1.14.1",
     "config": "^1.16.0",
@@ -18,7 +19,6 @@
     "log4js-config": "^0.1.1",
     "mongodb": "^2.0.45",
     "monk": "^1.0.1",
-    "morgan": "^1.6.1",
     "q": "^1.4.1",
     "request": "^2.63.0",
     "swagger-ui": "^2.1.3",
