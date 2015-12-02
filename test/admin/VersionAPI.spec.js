@@ -11,7 +11,7 @@ describe('VersionAPI', function() {
         response;
 
     beforeEach(function() {
-        versionAPI = new VersionAPI();
+        versionAPI = new VersionAPI({}, {});
 
         request = { params: {} };
         response = {

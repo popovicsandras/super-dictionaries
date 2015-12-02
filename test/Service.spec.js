@@ -24,7 +24,8 @@ describe('Service', function() {
     it('should call versionAPI at /admin/version endpoint' , function(done) {
 
         var config = {'port':1234, database: {url: ''}};
-        var versionAPI = new VersionAPI();
+        var options = {};
+        var versionAPI = new VersionAPI(config, options);
         var versionAPIGet = sinon.spy(versionAPI, 'get');
 
         app = new Service(config, {versionAPI: versionAPI}).start(express());

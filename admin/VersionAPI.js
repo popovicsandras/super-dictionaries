@@ -4,8 +4,8 @@ var appPackageJSON = require('../package.json');
 
 class VersionAPI {
 
-    constructor(packageJSON) {
-        this.configJSON = packageJSON || appPackageJSON;
+    constructor(config, options) {
+        this.configJSON = options.packageJSON || appPackageJSON;
     }
 
     install(app) {
