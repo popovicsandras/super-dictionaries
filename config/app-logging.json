@@ -3,19 +3,11 @@
   "appenders": [
     {
       "type": "console",
-      "layout": {
-        "type": "pattern",
-        "pattern": "%m"
-      },
       "category": "app"
     },
     {
       "type": "console",
-      "layout": {
-        "type": "pattern",
-        "pattern": "%m"
-      },
-      "category": "cirrus.middleware"
+      "category": "cirrus.auth"
     }
   ],
   "levels": {

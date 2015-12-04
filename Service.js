@@ -24,7 +24,6 @@ class Service {
     constructor(config, options) {
 
         options.loggerFactory = options.loggerFactory || new wsLogger.Log4jsConfigLoggerFactory();
-        console.log("LOGGING: "+options.loggerFactory)
 
     	this.options = options;
     	this.configuration = config;
