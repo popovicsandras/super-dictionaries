@@ -1,7 +1,9 @@
 /* jshint expr: true */
-/* global afterEach, describe, it, sinon, expect */
+/* global afterEach, beforeEach, describe, it, sinon, expect */
 
 'use strict';
+
+var _ = require('underscore');
 
 var supertest = require('supertest');
 var express = require('express');
@@ -14,6 +16,11 @@ var Cirrus = require('@workshare/nodejs-cirrus-auth');
 describe('Service', function() {
 
     var app;
+    var defaultOptions;
+
+    beforeEach(function() {
+        defaultOptions = {collection:[]};
+    });
 
     afterEach(function() {
         if (app) {
@@ -24,11 +31,11 @@ describe('Service', function() {
     it('should call versionAPI at /admin/version endpoint' , function(done) {
 
         var config = {port:1234, database: {url: ''}, environment:'foo'};
-        var options = {};
-        var versionAPI = new VersionAPI(config, options);
+        var versionAPI = new VersionAPI(config, {});
         var versionAPIGet = sinon.spy(versionAPI, 'get');
+        var options = _.extend(defaultOptions, {versionAPI: versionAPI});
 
-        app = new Service(config, {versionAPI: versionAPI}).start(express());
+        app = new Service(config, options).start(express());
 
         supertest(app)
             .get('/admin/version')
@@ -43,8 +50,9 @@ describe('Service', function() {
         var config = {port:1234, database: {url: ''}, environment:'foo'};
         var healthcheckAPI = new HealthcheckAPI();
         var healthcheckAPIGet = sinon.spy(healthcheckAPI, 'get');
+        var options = _.extend(defaultOptions, {healthcheckAPI: healthcheckAPI});
 
-        app = new Service(config, {healthcheckAPI: healthcheckAPI}).start(express());
+        app = new Service(config, options).start(express());
 
         supertest(app)
             .get('/admin/healthcheck')
@@ -58,10 +66,11 @@ describe('Service', function() {
 
         var config = {port:1234, database: {url: ''}, environment:'foo'};
         var cirrusMiddleware = new Cirrus.Middleware(config, {});
+        var options = _.extend(defaultOptions, {cirrusMiddleware: cirrusMiddleware});
 
         cirrusMiddleware.filter = sinon.spy();
 
-        app = new Service(config, {cirrusMiddleware: cirrusMiddleware}).start(express());
+        app = new Service(config, options).start(express());
 
         supertest(app)
             .get('/admin/healthcheck')
@@ -76,15 +85,15 @@ describe('Service', function() {
         function shouldInvokeCirrusBefore(apiName, done) {
 
             var config = {port:1234, database: {url: ''}, environment:'foo'};
-            var cirrusMiddleware = new Cirrus.Middleware(config, {});
+            var cirrusMiddleware = new Cirrus.Middleware(config, defaultOptions);
 
             sinon.stub(cirrusMiddleware, 'filter', function(request, response, next) {
                 next();
             });
 
-            var options = {
+            var options = _.extend(defaultOptions, {
                 cirrusMiddleware: cirrusMiddleware
-            };
+            });
 
             options[apiName] = {
                 install: function(app) {

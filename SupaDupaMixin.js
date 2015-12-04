@@ -6,7 +6,10 @@ var SupaDupaMixin = {
 
     getCollection: function() {
         var db = this.monk(this.config.database.url);
-        return db.get('dictionaries');
+        console.log('db: '+db);
+        var collection = db.get('dictionaries');
+        console.log('collection: '+collection);
+        return collection;
     },
 
     validateScope: function() {

@@ -5,9 +5,11 @@ var SupaDupaMixin = require('../SupaDupaMixin');
 
 class CreateUpdate{
 
-    constructor(collection) {
+    constructor(config, options) {
         _.extend(this, SupaDupaMixin);
-        this.collection = collection || this.getCollection();
+        this.collection = options.collection || this.getCollection();
+        // this.collection = options.collection || [];
+        // console.log('[CreateUpdate] Collection: '+JSON.stringify(this.collection));
     }
 
     install(app) {
