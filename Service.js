@@ -19,14 +19,12 @@ class HelloEndpoint {
     }
 }
 
-
-
-
 class Service {
 
     constructor(config, options) {
 
         options.loggerFactory = options.loggerFactory || new wsLogger.Log4jsConfigLoggerFactory();
+        console.log("LOGGING: "+options.loggerFactory)
 
     	this.options = options;
     	this.configuration = config;
@@ -42,7 +40,7 @@ class Service {
     }
 
     start(app) {
-    	var log = this.options.loggerFactory.get("Service");
+    	var log = this.options.loggerFactory.get("app");
 
         // how do we test this?
         var cookieParser = require('cookie-parser');

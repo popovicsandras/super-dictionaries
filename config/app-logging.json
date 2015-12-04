@@ -19,8 +19,6 @@
     }
   ],
   "levels": {
-    "[all]": "INFO",
-    "app": "DEBUG",
-    "cirrus.middleware": "DEBUG"
+    "[all]": "DEBUG"
   }
 }
