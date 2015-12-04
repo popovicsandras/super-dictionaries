@@ -11,6 +11,6 @@
     }
   ],
   "levels": {
-    "[all]": "DEBUG"
+    "[all]": "WARN"
   }
 }

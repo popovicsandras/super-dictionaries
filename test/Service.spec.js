@@ -23,7 +23,7 @@ describe('Service', function() {
 
     it('should call versionAPI at /admin/version endpoint' , function(done) {
 
-        var config = {'port':1234, database: {url: ''}};
+        var config = {port:1234, database: {url: ''}, environment:'foo'};
         var options = {};
         var versionAPI = new VersionAPI(config, options);
         var versionAPIGet = sinon.spy(versionAPI, 'get');
@@ -40,7 +40,7 @@ describe('Service', function() {
 
     it('should call healthcheckAPI at /admin/healthcheck endpoint' , function(done) {
 
-        var config = {'port':1234};
+        var config = {port:1234, database: {url: ''}, environment:'foo'};
         var healthcheckAPI = new HealthcheckAPI();
         var healthcheckAPIGet = sinon.spy(healthcheckAPI, 'get');
 
@@ -56,8 +56,8 @@ describe('Service', function() {
 
     it('should not use the Cirrus authentication middleware on admin endpoints', function(done) {
 
-        var config = {'port':1234, database: {url: ''}, environment: 'whatever'},
-            cirrusMiddleware = new Cirrus.Middleware(config);
+        var config = {port:1234, database: {url: ''}, environment:'foo'};
+        var cirrusMiddleware = new Cirrus.Middleware(config, {});
 
         cirrusMiddleware.filter = sinon.spy();
 
@@ -75,8 +75,8 @@ describe('Service', function() {
 
         function shouldInvokeCirrusBefore(apiName, done) {
 
-            var config = {'port':1234},
-                cirrusMiddleware = new Cirrus.Middleware(config);
+            var config = {port:1234, database: {url: ''}, environment:'foo'};
+            var cirrusMiddleware = new Cirrus.Middleware(config, {});
 
             sinon.stub(cirrusMiddleware, 'filter', function(request, response, next) {
                 next();
