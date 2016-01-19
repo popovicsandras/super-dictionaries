@@ -31,6 +31,7 @@ class Service {
         this.versionAPI  = options.versionAPI || new VersionAPI(config, options);
         this.healthcheckAPI = options.healthcheckAPI || new Healthcheck(config, options);
         this.cirrusMiddleware = options.cirrusMiddleware || new Cirrus.Middleware(config, options);
+        this.ciccioMiddleware = options.ciccioMiddleware || new HelloEndpoint(config, options);
 
         this.createUpdate = options.createUpdate || new CreateUpdate(config, options);
         this.delete = options.delete || new HelloEndpoint(config, options);
@@ -57,6 +58,7 @@ class Service {
         this.healthcheckAPI.install(app);
 
         this.cirrusMiddleware.install(app);
+        this.ciccioMiddleware.install(app);
         this.createUpdate.install(app);
         this.delete.install(app);
         this.list.install(app);
