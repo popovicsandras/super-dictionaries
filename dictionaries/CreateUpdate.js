@@ -11,7 +11,6 @@ class CreateUpdate{
     }
 
     _processRequest(request, response) {
-        //console.log('in put: ', request.body);
         //var selector = {
         //        scope: request.params.scope,
         //        uuid: request.params.uuid,

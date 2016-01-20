@@ -2,7 +2,8 @@
 
 'use strict';
 
-var CreateUpdate = require('../../dictionaries/CreateUpdate');
+var CreateUpdate = require('../../dictionaries/CreateUpdate'),
+    dictionaries = require('../../dictionaries/Dictionaries');
 
 describe('CreateUpdate', function() {
 
@@ -10,7 +11,7 @@ describe('CreateUpdate', function() {
         config,
         app;
 
-    before(function() {
+    beforeEach(function() {
         config = {};
         app = {
             put: sinon.spy()
@@ -29,4 +30,43 @@ describe('CreateUpdate', function() {
         expect(app.put).has.been.calledWith('/api/:scope/:uuid/dictionaries/:name.json');
     });
 
+    describe('Learning tests', function() {
+
+        var request,
+            response;
+
+        beforeEach(function() {
+            app.put = function(endPoint, action) {
+                action(request, response);
+            }
+        });
+
+        it.skip('should save data to mongo', function(done) {
+
+            // Arrange
+            request = {
+                scope: 'test scope',
+                uuid: '123456789',
+                name: 'dictionary name',
+                body: '{whatever: "retek"}'
+            };
+
+            // Act
+            createUpdate.install(app);
+
+
+            // Assert
+            var dictionary = dictionaries.findOne({
+                    scope: request.scope,
+                    uuid: request.uuid,
+                    name: request.name
+                });
+                dictionary.then(function(dictionary) {
+                    expect(dictionary.body).to.be.eql(request.body);
+                    done();
+                });
+                dictionary.finally(done);
+                //.done(done)
+        });
+    });
 });

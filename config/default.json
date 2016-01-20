@@ -2,6 +2,6 @@
   "port": 9001,
   "environment": "qa",
   "database": {
-    "url": "test"
+    "url": "localhost:27777/super-dictionaries"
   }
 }
