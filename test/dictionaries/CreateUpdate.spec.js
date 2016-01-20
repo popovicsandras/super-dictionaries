@@ -5,7 +5,7 @@
 var CreateUpdate = require('../../dictionaries/CreateUpdate'),
     dictionaries = require('../../dictionaries/Dictionaries');
 
-describe('CreateUpdate', function() {
+describe.only('CreateUpdate', function() {
 
     var createUpdate,
         config,
@@ -41,7 +41,7 @@ describe('CreateUpdate', function() {
             }
         });
 
-        it.skip('should save data to mongo', function(done) {
+        it('should save data to mongo', function(done) {
 
             // Arrange
             request = {
@@ -60,13 +60,22 @@ describe('CreateUpdate', function() {
                     scope: request.scope,
                     uuid: request.uuid,
                     name: request.name
-                });
-                dictionary.then(function(dictionary) {
-                    expect(dictionary.body).to.be.eql(request.body);
+                })
+                .then(function(dictionary) {
+                    try {
+                        expect(dictionary.body).to.be.eql(request.body);
+                    }
+                    catch (e) {
+                        console.log(e.message);
+                        expect(false).to.be.equal(true);
+                    }
+                    finally {
+                        done();
+                    }
+                }, function() {
+                    console.log(arguments);
                     done();
                 });
-                dictionary.finally(done);
-                //.done(done)
         });
     });
 });
