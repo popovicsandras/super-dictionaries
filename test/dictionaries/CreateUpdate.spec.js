@@ -2,40 +2,31 @@
 
 'use strict';
 
-var HealthcheckAPI = require('../../admin/HealthcheckAPI');
-var async = require('async');
-var Q = require('q');
+var CreateUpdate = require('../../dictionaries/CreateUpdate');
 
-describe('HealthcheckAPI', function() {
+describe('CreateUpdate', function() {
 
-    var healthcheckAPI,
+    var createUpdate,
         config,
-        request,
-        response,
-        cirrus,
-        tokens,
         app;
 
     before(function() {
         config = {};
-        request = {};
-        response = {};
-
         app = {
-            get: sinon.spy()
-        }
+            put: sinon.spy()
+        };
     });
 
     beforeEach(function() {
-        healthcheckAPI = new HealthcheckAPI(config, cirrus, tokens);
+        createUpdate = new CreateUpdate(config, {});
     });
 
-    it('should attach endpoints', function() {
+    it('should attach endpoint', function() {
         // Act
-        healthcheckAPI.install(app);
+        createUpdate.install(app);
 
         // Assert
-        expect(app.get).has.been.calledWith('/admin/healthcheck');
+        expect(app.put).has.been.calledWith('/api/:scope/:uuid/dictionaries/:name.json');
     });
 
 });
