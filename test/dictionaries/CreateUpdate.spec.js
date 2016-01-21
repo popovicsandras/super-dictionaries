@@ -32,30 +32,11 @@ describe('CreateUpdate', function() {
 
     describe('Learning tests', function() {
 
-        var request,
-            response;
+        var random,
+            request;
 
-        function readBackData(request, done) {
-            dictionaries.findOne({
-                scope: request.params.scope,
-                uuid: request.params.uuid,
-                name: request.params.name
-            })
-            .then(function(dictionary) {
-                try {
-                    expect(dictionary.content).to.be.eql(request.content);
-                    done();
-                }
-                catch (e) {
-                    done(e);
-                }
-            }, done);
-        }
-
-        it('should save new data to mongo', function(done) {
-
-            // Arrange
-            var random =  + Math.random();
+        beforeEach(function() {
+            random =  + Math.random();
             request = {
                 params: {
                     scope: 'test scope' + random,
@@ -66,12 +47,59 @@ describe('CreateUpdate', function() {
                     content: '{whatever: "retek"}' + random
                 }
             };
+        });
+
+        afterEach(function(done) {
+            dictionaries.remove({
+                    scope: request.params.scope,
+                    uuid: request.params.uuid,
+                    name: request.params.name
+                })
+                .then(function() {done();}, function() {done();});
+        });
+
+        function readBackData(request, done) {
+            return dictionaries.find({
+                    scope: request.params.scope,
+                    uuid: request.params.uuid,
+                    name: request.params.name
+                })
+                .then(function(dictionaries) {
+                    try {
+                        expect(dictionaries.length).to.be.equal(1);
+                        expect(dictionaries[0].body).to.be.eql(request.body.content);
+                        done();
+                    }
+                    catch (e) {
+                        done(e);
+                    }
+                }, done);
+        }
+
+        function clone(object) {
+            return JSON.parse(JSON.stringify(object));
+        }
+
+        it('should save new data to mongo', function(done) {
 
             // Act
             createUpdate
-                ._processRequest(request, response)
+                ._processRequest(request)
                 // Assert
-                .then(readBackData.bind(this, request, done));
+                .then(readBackData.bind(this, request, done), done);
+        });
+
+        it('should update existing data previously stored in mongo', function(done) {
+
+            // Arrange
+            var updateRequest = clone(request);
+            updateRequest.body.content = '{anotherProperty: "ciccio"}' + random;
+
+            createUpdate
+                ._processRequest(request)
+                .then(readBackData.bind(this, request, function() {}), done)
+                .then(createUpdate._processRequest.bind(createUpdate, updateRequest))
+                .then(readBackData.bind(this, updateRequest, done), done);
         });
     });
 });
