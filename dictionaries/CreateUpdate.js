@@ -11,22 +11,15 @@ class CreateUpdate{
     }
 
     _processRequest(request) {
-        var selector = {
-                scope: request.params.scope,
-                uuid: request.params.uuid,
-                name: request.params.name
-            },
-            dictionary = {
+        var dictionary = {
                 scope: request.params.scope,
                 uuid: request.params.uuid,
                 name: request.params.name,
                 body: request.body.content
             };
 
-        return this.collection.update(
-            selector,
-            dictionary,
-            { upsert: true }
+        return this.collection.insert(
+            dictionary
         );
     }
 }

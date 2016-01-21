@@ -35,7 +35,24 @@ describe('CreateUpdate', function() {
         var request,
             response;
 
-        it('should save data to mongo', function(done) {
+        function readBackData(request, done) {
+            dictionaries.findOne({
+                scope: request.params.scope,
+                uuid: request.params.uuid,
+                name: request.params.name
+            })
+            .then(function(dictionary) {
+                try {
+                    expect(dictionary.content).to.be.eql(request.content);
+                    done();
+                }
+                catch (e) {
+                    done(e);
+                }
+            }, done);
+        }
+
+        it('should save new data to mongo', function(done) {
 
             // Arrange
             var random =  + Math.random();
@@ -51,24 +68,10 @@ describe('CreateUpdate', function() {
             };
 
             // Act
-            createUpdate._processRequest(request, response)
-                .then(function() {
-                    // Assert
-                    var dictionary = dictionaries.findOne({
-                            scope: request.params.scope,
-                            uuid: request.params.uuid,
-                            name: request.params.name
-                        })
-                        .then(function(dictionary) {
-                            try {
-                                expect(dictionary.content).to.be.eql(request.content);
-                                done();
-                            }
-                            catch (e) {
-                                done(e);
-                            }
-                        }, done);
-                })
+            createUpdate
+                ._processRequest(request, response)
+                // Assert
+                .then(readBackData.bind(this, request, done));
         });
     });
 });
