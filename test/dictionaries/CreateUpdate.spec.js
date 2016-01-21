@@ -33,7 +33,8 @@ describe('CreateUpdate', function() {
     describe('Learning tests', function() {
 
         var random,
-            request;
+            request,
+            response;
 
         beforeEach(function() {
             random =  + Math.random();
@@ -47,6 +48,16 @@ describe('CreateUpdate', function() {
                     content: '{whatever: "retek"}' + random
                 }
             };
+
+            response = {
+                status: function() {
+                    return response;
+                },
+                end: sinon.spy()
+            };
+
+            sinon.spy(response, 'status');
+
         });
 
         afterEach(function(done) {
@@ -82,24 +93,38 @@ describe('CreateUpdate', function() {
 
         it('should save new data to mongo', function(done) {
 
-            // Act
             createUpdate
-                ._processRequest(request)
-                // Assert
+                ._processRequest(request, response)
                 .then(readBackData.bind(this, request, done), done);
         });
 
         it('should update existing data previously stored in mongo', function(done) {
 
-            // Arrange
             var updateRequest = clone(request);
             updateRequest.body.content = '{anotherProperty: "ciccio"}' + random;
 
             createUpdate
-                ._processRequest(request)
+                ._processRequest(request, response)
                 .then(readBackData.bind(this, request, function() {}), done)
-                .then(createUpdate._processRequest.bind(createUpdate, updateRequest))
+                .then(createUpdate._processRequest.bind(createUpdate, updateRequest, response))
                 .then(readBackData.bind(this, updateRequest, done), done);
+        });
+
+        it('should send status code 200 as response', function(done) {
+
+            createUpdate
+                ._processRequest(request, response)
+                .then(function() {
+                    try {
+                        expect(response.status).to.have.been.calledWith(200);
+                        expect(response.end).to.have.been.called;
+                        done();
+                    }
+                    catch (e) {
+                        done(e);
+                    }
+                }, done);
+
         });
     });
 });
