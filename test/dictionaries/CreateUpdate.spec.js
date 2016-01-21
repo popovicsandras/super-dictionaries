@@ -35,41 +35,40 @@ describe('CreateUpdate', function() {
         var request,
             response;
 
-        beforeEach(function() {
-            app.put = function(endPoint, action) {
-                action(request, response);
-            }
-        });
-
         it('should save data to mongo', function(done) {
 
             // Arrange
+            var random =  + Math.random();
             request = {
-                scope: 'test scope',
-                uuid: '123456789',
-                name: 'dictionary name',
-                body: '{whatever: "retek"}'
+                params: {
+                    scope: 'test scope' + random,
+                    uuid: '123456789' + random,
+                    name: 'dictionary name' + random
+                },
+                body: {
+                    content: '{whatever: "retek"}' + random
+                }
             };
 
             // Act
-            createUpdate.install(app);
-
-
-            // Assert
-            var dictionary = dictionaries.findOne({
-                    scope: request.scope,
-                    uuid: request.uuid,
-                    name: request.name
+            createUpdate._processRequest(request, response)
+                .then(function() {
+                    // Assert
+                    var dictionary = dictionaries.findOne({
+                            scope: request.params.scope,
+                            uuid: request.params.uuid,
+                            name: request.params.name
+                        })
+                        .then(function(dictionary) {
+                            try {
+                                expect(dictionary.content).to.be.eql(request.content);
+                                done();
+                            }
+                            catch (e) {
+                                done(e);
+                            }
+                        }, done);
                 })
-                .then(function(dictionary) {
-                    try {
-                        expect(dictionary.body).to.be.eql(request.body);
-                        done();
-                    }
-                    catch (e) {
-                        done(e);
-                    }
-                }, done);
         });
     });
 });
