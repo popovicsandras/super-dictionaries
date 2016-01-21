@@ -5,7 +5,7 @@
 var CreateUpdate = require('../../dictionaries/CreateUpdate'),
     dictionaries = require('../../dictionaries/Dictionaries');
 
-describe.only('CreateUpdate', function() {
+describe('CreateUpdate', function() {
 
     var createUpdate,
         config,
@@ -64,18 +64,12 @@ describe.only('CreateUpdate', function() {
                 .then(function(dictionary) {
                     try {
                         expect(dictionary.body).to.be.eql(request.body);
-                    }
-                    catch (e) {
-                        console.log(e.message);
-                        expect(false).to.be.equal(true);
-                    }
-                    finally {
                         done();
                     }
-                }, function() {
-                    console.log(arguments);
-                    done();
-                });
+                    catch (e) {
+                        done(e);
+                    }
+                }, done);
         });
     });
 });
