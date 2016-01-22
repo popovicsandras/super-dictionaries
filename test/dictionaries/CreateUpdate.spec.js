@@ -10,26 +10,43 @@ require('mocha-generators').install();
 describe('CreateUpdate', function() {
 
     var createUpdate,
-        config,
-        app;
+        options,
+        dummyApp;
 
     beforeEach(function() {
-        config = {};
-        app = {
-            put: sinon.spy()
+        dummyApp = {
+            put: function(endPoint, handler) {
+                this.handler = handler;
+            },
+            makeRequest: function() {
+                this.handler();
+            }
         };
-    });
-
-    beforeEach(function() {
-        createUpdate = new CreateUpdate(config, {});
+        sinon.spy(dummyApp, 'put');
     });
 
     it('should attach endpoint', function() {
-        // Act
-        createUpdate.install(app);
 
-        // Assert
-        expect(app.put).has.been.calledWith('/api/:scope/:uuid/dictionaries/:name.json');
+        createUpdate = new CreateUpdate();
+
+        createUpdate.install(dummyApp);
+
+        expect(dummyApp.put).has.been.calledWith('/api/:scope/:uuid/dictionaries/:name.json');
+    });
+
+    it('should call Dictionaries collection\'s update method', function() {
+
+        options = {
+            Dictionaries: {
+                update: sinon.spy()
+            }
+        };
+        createUpdate = new CreateUpdate(options);
+        createUpdate.install(dummyApp);
+
+        dummyApp.makeRequest();
+
+        expect(options.Dictionaries.update).to.have.been.called;
     });
 
     describe.skip('Learning tests', function() {
