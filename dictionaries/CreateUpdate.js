@@ -12,7 +12,7 @@ class CreateUpdate{
         app.put('/api/:scope/:uuid/dictionaries/:name.json', co.bind(this, this._processRequest));
     }
 
-    *_processRequest(request, response) {
+    * _processRequest(request, response) {
         var selector = {
                 scope: request.params.scope,
                 uuid: request.params.uuid,
@@ -23,16 +23,18 @@ class CreateUpdate{
                 uuid: request.params.uuid,
                 name: request.params.name,
                 body: request.body.content
-            },
-            updatePromise = this.collection.update(
-                selector,
-                dictionary,
-                {upsert: true}
-            );
+            };
 
-        updatePromise.then(this._sendResponse.bind(this, response));
+        yield this._save(selector, dictionary);
+        this._sendResponse(response);
+    }
 
-        return updatePromise;
+    _save(selector, dictionary) {
+        return this.collection.update(
+            selector,
+            dictionary,
+            {upsert: true}
+        );
     }
 
     _sendResponse(response) {

@@ -114,8 +114,12 @@ describe('CreateUpdate', function() {
 
         it('should send status code 200 as response', function(done) {
 
-            createUpdate
-                ._processRequest(request, response).next().value
+            var generator = createUpdate._processRequest(request, response)
+
+            generator.next().value
+                .then(function() {
+                    return generator.next().value;
+                })
                 .then(function() {
                     try {
                         expect(response.status).to.have.been.calledWith(200);
