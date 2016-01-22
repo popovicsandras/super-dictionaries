@@ -33,7 +33,7 @@ class Service {
         this.cirrusMiddleware = options.cirrusMiddleware || new CirrusMiddleware(config, options);
         this.ciccioMiddleware = options.ciccioMiddleware || new HelloEndpoint(config, options);
 
-        this.createUpdate = options.createUpdate || new CreateUpdate(config, options);
+        this.createUpdate = options.createUpdate || new CreateUpdate();
         this.delete = options.delete || new HelloEndpoint(config, options);
         this.get = options.get || new HelloEndpoint(config, options);
         this.list = options.list || new HelloEndpoint(config, options);
