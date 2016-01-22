@@ -18,36 +18,53 @@ describe('CreateUpdate', function() {
             put: function(endPoint, handler) {
                 this.handler = handler;
             },
-            makeRequest: function() {
-                this.handler();
+            makeRequest: function(request) {
+                this.handler(request);
             }
         };
         sinon.spy(dummyApp, 'put');
     });
 
-    it('should attach endpoint', function() {
+    describe('Install', function() {
 
-        createUpdate = new CreateUpdate();
+        it('should attach endpoint', function() {
 
-        createUpdate.install(dummyApp);
+            createUpdate = new CreateUpdate();
 
-        expect(dummyApp.put).has.been.calledWith('/api/:scope/:uuid/dictionaries/:name.json');
+            createUpdate.install(dummyApp);
+
+            expect(dummyApp.put).has.been.calledWith('/api/:scope/:uuid/dictionaries/:name.json');
+        });
     });
 
-    it('should call Dictionaries collection\'s update method', function() {
+    describe('Making a request', function() {
 
-        options = {
-            Dictionaries: {
-                update: sinon.spy()
+        var request;
+
+        beforeEach(function() {
+            request = {
+                params: {
+                    scope: 'test scope',
+                    uuid: 'test uuid',
+                    name: 'test name'
+                }
             }
-        };
-        createUpdate = new CreateUpdate(options);
-        createUpdate.install(dummyApp);
+        });
 
-        dummyApp.makeRequest();
+        it('should call Dictionaries collection\'s update method with proper parameters', function() {
 
-        expect(options.Dictionaries.update).to.have.been.called;
+            options = {
+                Dictionaries: { update: sinon.spy() }
+            };
+            createUpdate = new CreateUpdate(options);
+            createUpdate.install(dummyApp);
+
+            dummyApp.makeRequest(request);
+
+            expect(options.Dictionaries.update).to.have.been.calledWith(request.params);
+        });
     });
+
 
     describe.skip('Learning tests', function() {
 
