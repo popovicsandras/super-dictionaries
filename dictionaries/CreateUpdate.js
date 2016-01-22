@@ -1,6 +1,7 @@
 'use strict';
 
-var Dictionaries = require('./Dictionaries');
+var Dictionaries = require('./Dictionaries'),
+    co = require('co');
 
 class CreateUpdate {
 
@@ -9,10 +10,10 @@ class CreateUpdate {
     }
 
     install(app) {
-        app.put('/api/:scope/:uuid/dictionaries/:name.json', this._processRequest);
+        app.put('/api/:scope/:uuid/dictionaries/:name.json', co.bind(this, this._processRequest));
     }
 
-    _processRequest(request) {
+    * _processRequest(request) {
         var selector = {
                 scope: request.params.scope,
                 uuid: request.params.uuid,
