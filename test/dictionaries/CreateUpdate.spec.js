@@ -3,10 +3,10 @@
 'use strict';
 
 var CreateUpdate = require('../../dictionaries/CreateUpdate'),
-    dictionaries = require('../../dictionaries/Dictionaries'),
+    Dictionaries = require('../../dictionaries/Dictionaries'),
     co = require('co');
 
-describe.only('CreateUpdate', function() {
+describe('CreateUpdate', function() {
 
     var createUpdate,
         config,
@@ -62,7 +62,7 @@ describe.only('CreateUpdate', function() {
         });
 
         afterEach(function(done) {
-            dictionaries.remove({
+            Dictionaries.remove({
                     scope: request.params.scope,
                     uuid: request.params.uuid,
                     name: request.params.name
@@ -71,21 +71,22 @@ describe.only('CreateUpdate', function() {
         });
 
         function readBackData(request, done) {
-            return dictionaries.find({
-                    scope: request.params.scope,
-                    uuid: request.params.uuid,
-                    name: request.params.name
-                })
-                .then(function(dictionaries) {
-                    try {
-                        expect(dictionaries.length).to.be.equal(1);
-                        expect(dictionaries[0].body).to.be.eql(request.body.content);
-                        done();
-                    }
-                    catch (e) {
-                        done(e);
-                    }
-                }, done);
+            co(function* () {
+                try {
+                    var dictionaries = yield Dictionaries.find({
+                        scope: request.params.scope,
+                        uuid: request.params.uuid,
+                        name: request.params.name
+                    });
+
+                    expect(dictionaries.length).to.be.equal(1);
+                    expect(dictionaries[0].body).to.be.eql(request.body.content);
+                    done();
+                }
+                catch (e) {
+                    done(e);
+                }
+            });
         }
 
         function clone(object) {
@@ -93,7 +94,6 @@ describe.only('CreateUpdate', function() {
         }
 
         it('should save new data to mongo', function(done) {
-
             co(function* () {
                 yield createUpdate._processRequest(request, response);
                 readBackData(request, done)
