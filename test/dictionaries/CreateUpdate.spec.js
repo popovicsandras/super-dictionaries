@@ -2,10 +2,11 @@
 
 'use strict';
 
-var CreateUpdate = require('../../dictionaries/CreateUpdate'),
-    Dictionaries = require('../../dictionaries/Dictionaries');
-
 require('mocha-generators').install();
+
+var CreateUpdate = require('../../dictionaries/CreateUpdate'),
+    Dictionaries = require('../../dictionaries/Dictionaries'),
+    Q = require('q');
 
 describe('CreateUpdate', function() {
 
@@ -40,13 +41,20 @@ describe('CreateUpdate', function() {
     describe('Making a request', function() {
 
         var request,
-            response;
+            response,
+            updatePromise;
 
         beforeEach(function() {
 
             options = {
-                Dictionaries: { update: sinon.spy() }
+                Dictionaries: {
+                    update: function() {
+                        updatePromise = Q.defer();
+                        return updatePromise.promise;
+                    }
+                }
             };
+            sinon.spy(options.Dictionaries, 'update');
 
             request = {
                 params: {
@@ -90,12 +98,28 @@ describe('CreateUpdate', function() {
             );
         });
 
-        it('should response with 200 status code', function() {
+        it('should not response until Dictionaries.update finished', function* () {
 
             createUpdate = new CreateUpdate(options);
             createUpdate.install(dummyApp);
 
             dummyApp.makeRequest(request, response);
+
+            expect(response.status).to.have.not.been.called;
+            expect(response.end).to.have.not.been.called;
+        });
+
+        it('should response with 200 status code only after Dictionaries.update succeeded', function* () {
+
+            createUpdate = new CreateUpdate(options);
+            createUpdate.install(dummyApp);
+
+            dummyApp.makeRequest(request, response);
+
+            // Resolve update promise, to let the generator continue form suspended state
+            updatePromise.resolve();
+            // Dirty hack: with this we can wait until the next queue frame
+            yield Promise.resolve();
 
             expect(response.status).to.have.been.calledWith(200);
             expect(response.end).to.have.been.called;

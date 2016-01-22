@@ -26,7 +26,7 @@ class CreateUpdate {
                 content: request.body.content
             };
 
-        Dictionaries.update(selector, document, {upsert: true});
+        yield Dictionaries.update(selector, document, {upsert: true});
         response.status(200).end();
     }
 }
