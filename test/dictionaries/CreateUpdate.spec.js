@@ -3,9 +3,10 @@
 'use strict';
 
 var CreateUpdate = require('../../dictionaries/CreateUpdate'),
-    dictionaries = require('../../dictionaries/Dictionaries');
+    dictionaries = require('../../dictionaries/Dictionaries'),
+    co = require('co');
 
-describe('CreateUpdate', function() {
+describe.only('CreateUpdate', function() {
 
     var createUpdate,
         config,
@@ -93,9 +94,10 @@ describe('CreateUpdate', function() {
 
         it('should save new data to mongo', function(done) {
 
-            createUpdate
-                ._processRequest(request, response).next().value
-                .then(readBackData.bind(this, request, done), done);
+            co(function* () {
+                yield createUpdate._processRequest(request, response);
+                readBackData(request, done)
+            });
         });
 
         it('should update existing data previously stored in mongo', function(done) {
