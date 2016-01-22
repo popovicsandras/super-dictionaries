@@ -32,7 +32,7 @@ describe('CreateUpdate', function() {
         expect(app.put).has.been.calledWith('/api/:scope/:uuid/dictionaries/:name.json');
     });
 
-    describe('Learning tests', function() {
+    describe.skip('Learning tests', function() {
 
         var random,
             request,
