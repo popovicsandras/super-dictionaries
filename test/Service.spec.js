@@ -11,7 +11,7 @@ var express = require('express');
 var Service = require('../Service');
 var VersionAPI = require('../admin/VersionAPI');
 var HealthcheckAPI = require('../admin/HealthcheckAPI');
-var Cirrus = require('@workshare/nodejs-cirrus-auth');
+var CirrusMiddleware = require('@workshare/nodejs-cirrus-auth');
 
 describe('Service', function() {
 
@@ -65,7 +65,7 @@ describe('Service', function() {
     it('should not use the Cirrus authentication middleware on admin endpoints', function(done) {
 
         var config = {port:1234, database: {url: ''}, environment:'foo'};
-        var cirrusMiddleware = new Cirrus.Middleware(config, {});
+        var cirrusMiddleware = new CirrusMiddleware(config, {});
         var options = _.extend(defaultOptions, {cirrusMiddleware: cirrusMiddleware});
 
         cirrusMiddleware.filter = sinon.spy();
@@ -85,7 +85,7 @@ describe('Service', function() {
         function shouldInvokeCirrusBefore(apiName, done) {
 
             var config = {port:1234, database: {url: ''}, environment:'foo'};
-            var cirrusMiddleware = new Cirrus.Middleware(config, defaultOptions);
+            var cirrusMiddleware = new CirrusMiddleware(config, defaultOptions);
 
             sinon.stub(cirrusMiddleware, 'filter', function(request, response, next) {
                 next();
