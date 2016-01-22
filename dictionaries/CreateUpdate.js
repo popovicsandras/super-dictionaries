@@ -1,5 +1,7 @@
 'use strict';
 
+var co = require('co');
+
 class CreateUpdate{
 
     constructor() {
@@ -7,10 +9,10 @@ class CreateUpdate{
     }
 
     install(app) {
-        app.put('/api/:scope/:uuid/dictionaries/:name.json', this._processRequest.bind(this));
+        app.put('/api/:scope/:uuid/dictionaries/:name.json', co.bind(this, this._processRequest));
     }
 
-    _processRequest(request, response) {
+    *_processRequest(request, response) {
         var selector = {
                 scope: request.params.scope,
                 uuid: request.params.uuid,

@@ -94,7 +94,7 @@ describe('CreateUpdate', function() {
         it('should save new data to mongo', function(done) {
 
             createUpdate
-                ._processRequest(request, response)
+                ._processRequest(request, response).next().value
                 .then(readBackData.bind(this, request, done), done);
         });
 
@@ -104,16 +104,18 @@ describe('CreateUpdate', function() {
             updateRequest.body.content = '{anotherProperty: "ciccio"}' + random;
 
             createUpdate
-                ._processRequest(request, response)
+                ._processRequest(request, response).next().value
                 .then(readBackData.bind(this, request, function() {}), done)
-                .then(createUpdate._processRequest.bind(createUpdate, updateRequest, response))
+                .then(function () {
+                    return createUpdate._processRequest(updateRequest, response).next().value;
+                })
                 .then(readBackData.bind(this, updateRequest, done), done);
         });
 
         it('should send status code 200 as response', function(done) {
 
             createUpdate
-                ._processRequest(request, response)
+                ._processRequest(request, response).next().value
                 .then(function() {
                     try {
                         expect(response.status).to.have.been.calledWith(200);
