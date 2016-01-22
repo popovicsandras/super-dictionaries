@@ -31,6 +31,7 @@
     "jshint": "^2.8.0",
     "jshint-stylish": "^2.0.1",
     "mocha": "^2.3.2",
+    "mocha-generators": "^1.2.0",
     "mocha-runner": "^1.1.1",
     "mock-promises": "^0.6.0",
     "nodemon": "^1.6.1",

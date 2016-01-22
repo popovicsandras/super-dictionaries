@@ -3,8 +3,9 @@
 'use strict';
 
 var CreateUpdate = require('../../dictionaries/CreateUpdate'),
-    Dictionaries = require('../../dictionaries/Dictionaries'),
-    co = require('co');
+    Dictionaries = require('../../dictionaries/Dictionaries');
+
+require('mocha-generators').install();
 
 describe('CreateUpdate', function() {
 
@@ -61,78 +62,44 @@ describe('CreateUpdate', function() {
 
         });
 
-        afterEach(function(done) {
-            Dictionaries.remove({
-                    scope: request.params.scope,
-                    uuid: request.params.uuid,
-                    name: request.params.name
-                })
-                .then(function() {done();}, function() {done();});
-        });
-
-        function readBackData(request, done) {
-            co(function* () {
-                try {
-                    var dictionaries = yield Dictionaries.find({
-                        scope: request.params.scope,
-                        uuid: request.params.uuid,
-                        name: request.params.name
-                    });
-
-                    expect(dictionaries.length).to.be.equal(1);
-                    expect(dictionaries[0].body).to.be.eql(request.body.content);
-                    done();
-                }
-                catch (e) {
-                    done(e);
-                }
-            });
-        }
-
-        function clone(object) {
-            return JSON.parse(JSON.stringify(object));
-        }
-
-        it('should save new data to mongo', function(done) {
-            co(function* () {
-                yield createUpdate._processRequest(request, response);
-                readBackData(request, done)
+        afterEach(function* () {
+            yield Dictionaries.remove({
+                scope: request.params.scope,
+                uuid: request.params.uuid,
+                name: request.params.name
             });
         });
 
-        it('should update existing data previously stored in mongo', function(done) {
+        function* assertSavedData (request) {
+            var dictionaries = yield Dictionaries.find({
+                scope: request.params.scope,
+                uuid: request.params.uuid,
+                name: request.params.name
+            });
 
-            var updateRequest = clone(request);
-            updateRequest.body.content = '{anotherProperty: "ciccio"}' + random;
+            expect(dictionaries.length).to.be.equal(1);
+            expect(dictionaries[0].body).to.be.eql(request.body.content);
+        }
 
-            createUpdate
-                ._processRequest(request, response).next().value
-                .then(readBackData.bind(this, request, function() {}), done)
-                .then(function () {
-                    return createUpdate._processRequest(updateRequest, response).next().value;
-                })
-                .then(readBackData.bind(this, updateRequest, done), done);
+        it('should save new data to mongo', function* () {
+            yield createUpdate._processRequest(request, response);
+            yield assertSavedData(request);
         });
 
-        it('should send status code 200 as response', function(done) {
+        it('should update existing data previously stored in mongo', function* () {
 
-            var generator = createUpdate._processRequest(request, response)
+            yield createUpdate._processRequest(request, response);
 
-            generator.next().value
-                .then(function() {
-                    return generator.next().value;
-                })
-                .then(function() {
-                    try {
-                        expect(response.status).to.have.been.calledWith(200);
-                        expect(response.end).to.have.been.called;
-                        done();
-                    }
-                    catch (e) {
-                        done(e);
-                    }
-                }, done);
+            request.body.content = '{anotherProperty: "ciccio"}' + random;
+            yield createUpdate._processRequest(request, response);
+            yield assertSavedData(request);
+        });
 
+        it('should send status code 200 as response', function* () {
+
+            yield createUpdate._processRequest(request, response);
+            expect(response.status).to.have.been.calledWith(200);
+            expect(response.end).to.have.been.called;
         });
     });
 });
