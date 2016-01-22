@@ -14,12 +14,18 @@ class CreateUpdate {
 
     _processRequest(request) {
         var selector = {
-            scope: request.params.scope,
-            uuid: request.params.uuid,
-            name: request.params.name
-        };
+                scope: request.params.scope,
+                uuid: request.params.uuid,
+                name: request.params.name
+            },
+            document = {
+                scope: request.params.scope,
+                uuid: request.params.uuid,
+                name: request.params.name,
+                content: request.body.content
+            };
 
-        Dictionaries.update(selector);
+        Dictionaries.update(selector, document);
     }
 }
 

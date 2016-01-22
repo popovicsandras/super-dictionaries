@@ -42,26 +42,41 @@ describe('CreateUpdate', function() {
         var request;
 
         beforeEach(function() {
+
+            options = {
+                Dictionaries: { update: sinon.spy() }
+            };
+
             request = {
                 params: {
                     scope: 'test scope',
                     uuid: 'test uuid',
                     name: 'test name'
+                },
+                body: {
+                    content: 'test content'
                 }
             }
         });
 
         it('should call Dictionaries collection\'s update method with proper parameters', function() {
 
-            options = {
-                Dictionaries: { update: sinon.spy() }
+            var expectedDocument = {
+                scope: request.params.scope,
+                uuid: request.params.uuid,
+                name: request.params.name,
+                content: request.body.content
             };
+
             createUpdate = new CreateUpdate(options);
             createUpdate.install(dummyApp);
 
             dummyApp.makeRequest(request);
 
-            expect(options.Dictionaries.update).to.have.been.calledWith(request.params);
+            expect(options.Dictionaries.update).to.have.been.calledWith(
+                request.params,
+                expectedDocument
+            );
         });
     });
 
