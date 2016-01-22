@@ -123,7 +123,18 @@ describe('CreateUpdate', function() {
 
             expect(response.status).to.have.been.calledWith(200);
             expect(response.end).to.have.been.called;
-        })
+        });
+
+        it('should response with 400 status code if the request parameter are incorrect', function() {
+
+            createUpdate = new CreateUpdate(options);
+            createUpdate.install(dummyApp);
+
+            dummyApp.makeRequest({}, response);
+
+            expect(response.status).to.have.been.calledWith(400);
+            expect(response.end).to.have.been.called;
+        });
     });
 
 
