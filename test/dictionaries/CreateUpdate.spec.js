@@ -138,7 +138,7 @@ describe('CreateUpdate', function() {
     });
 
 
-    describe('Learning tests', function() {
+    describe.skip('Learning tests [requires DB]', function() {
 
         var random,
             request,
