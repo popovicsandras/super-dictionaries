@@ -15,6 +15,7 @@ describe('CreateUpdate', function() {
         dummyApp;
 
     beforeEach(function() {
+        options = {};
         dummyApp = {
             put: function(endPoint, handler) {
                 this.handler = handler;
@@ -35,6 +36,23 @@ describe('CreateUpdate', function() {
             createUpdate.install(dummyApp);
 
             expect(dummyApp.put).has.been.calledWith('/api/:scope/:uuid/dictionaries/:name.json');
+        });
+    });
+
+    describe('Logging', function() {
+
+        it('should get the correct logger from LoggerFactory', function() {
+
+            var loggerFactory = {
+                get: sinon.spy()
+            };
+            options.loggerFactory = loggerFactory;
+
+            // Act
+            createUpdate = new CreateUpdate(options);
+
+            // Assert
+            expect(loggerFactory.get).to.have.been.calledWith('dictionaries.createupdate');
         });
     });
 

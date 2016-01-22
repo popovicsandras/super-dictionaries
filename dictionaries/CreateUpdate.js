@@ -6,6 +6,13 @@ class CreateUpdate {
 
     constructor(options) {
         this.Dictionaries = options && options.Dictionaries || require('./Dictionaries');
+
+        if(options && options.loggerFactory) {
+            this.log = options.loggerFactory.get('dictionaries.createupdate');
+        } else {
+            var Logger = require('@workshare/ws-logger').Logger;
+            this.log = new Logger();
+        }
     }
 
     install(app) {
@@ -17,6 +24,7 @@ class CreateUpdate {
             yield this._save(request);
             response.status(200).end();
         } catch (e) {
+            this.log.error(e);
             response.status(400).end();
         }
     }
