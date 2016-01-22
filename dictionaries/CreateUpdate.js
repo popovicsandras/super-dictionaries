@@ -15,23 +15,27 @@ class CreateUpdate {
 
     * _processRequest(request, response) {
         try {
-            var selector = {
-                    scope: request.params.scope,
-                    uuid: request.params.uuid,
-                    name: request.params.name
-                },
-                document = {
-                    scope: request.params.scope,
-                    uuid: request.params.uuid,
-                    name: request.params.name,
-                    content: request.body.content
-                };
-
-            yield Dictionaries.update(selector, document, {upsert: true});
+            yield this._save(request);
             response.status(200).end();
         } catch (e) {
             response.status(400).end();
         }
+    }
+
+    _save(request) {
+        var selector = {
+                scope: request.params.scope,
+                uuid: request.params.uuid,
+                name: request.params.name
+            },
+            document = {
+                scope: request.params.scope,
+                uuid: request.params.uuid,
+                name: request.params.name,
+                content: request.body.content
+            };
+
+        return Dictionaries.update(selector, document, {upsert: true});
     }
 }
 
