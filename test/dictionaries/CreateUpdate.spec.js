@@ -75,7 +75,8 @@ describe('CreateUpdate', function() {
 
             expect(options.Dictionaries.update).to.have.been.calledWith(
                 request.params,
-                expectedDocument
+                expectedDocument,
+                {upsert: true}
             );
         });
     });

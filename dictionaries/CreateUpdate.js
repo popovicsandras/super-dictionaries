@@ -25,7 +25,7 @@ class CreateUpdate {
                 content: request.body.content
             };
 
-        Dictionaries.update(selector, document);
+        Dictionaries.update(selector, document, {upsert: true});
     }
 }
 
