@@ -13,7 +13,7 @@ class CreateUpdate {
         app.put('/api/:scope/:uuid/dictionaries/:name.json', co.bind(this, this._processRequest));
     }
 
-    * _processRequest(request) {
+    * _processRequest(request, response) {
         var selector = {
                 scope: request.params.scope,
                 uuid: request.params.uuid,
@@ -27,6 +27,7 @@ class CreateUpdate {
             };
 
         Dictionaries.update(selector, document, {upsert: true});
+        response.status(200).end();
     }
 }
 

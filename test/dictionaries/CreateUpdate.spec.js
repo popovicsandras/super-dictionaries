@@ -18,8 +18,8 @@ describe('CreateUpdate', function() {
             put: function(endPoint, handler) {
                 this.handler = handler;
             },
-            makeRequest: function(request) {
-                this.handler(request);
+            makeRequest: function(request, response) {
+                this.handler(request, response);
             }
         };
         sinon.spy(dummyApp, 'put');
@@ -39,7 +39,8 @@ describe('CreateUpdate', function() {
 
     describe('Making a request', function() {
 
-        var request;
+        var request,
+            response;
 
         beforeEach(function() {
 
@@ -56,7 +57,16 @@ describe('CreateUpdate', function() {
                 body: {
                     content: 'test content'
                 }
-            }
+            };
+
+            response = {
+                status: function() {
+                    return response;
+                },
+                end: sinon.spy()
+            };
+
+            sinon.spy(response, 'status');
         });
 
         it('should call Dictionaries collection\'s update method with proper parameters', function() {
@@ -71,7 +81,7 @@ describe('CreateUpdate', function() {
             createUpdate = new CreateUpdate(options);
             createUpdate.install(dummyApp);
 
-            dummyApp.makeRequest(request);
+            dummyApp.makeRequest(request, response);
 
             expect(options.Dictionaries.update).to.have.been.calledWith(
                 request.params,
@@ -79,6 +89,17 @@ describe('CreateUpdate', function() {
                 {upsert: true}
             );
         });
+
+        it('should response with 200 status code', function() {
+
+            createUpdate = new CreateUpdate(options);
+            createUpdate.install(dummyApp);
+
+            dummyApp.makeRequest(request, response);
+
+            expect(response.status).to.have.been.calledWith(200);
+            expect(response.end).to.have.been.called;
+        })
     });
 
 
