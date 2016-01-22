@@ -5,7 +5,7 @@ var co = require('co');
 class CreateUpdate {
 
     constructor(options) {
-        this.Dictionaries = options && options.Dictionaries || require('./Dictionaries');
+        this.dictionaries = options && options.dictionaries || require('./Dictionaries');
 
         if(options && options.loggerFactory) {
             this.log = options.loggerFactory.get('dictionaries.createupdate');
@@ -42,7 +42,7 @@ class CreateUpdate {
                 content: request.body.content
             };
 
-        return this.Dictionaries.update(selector, document, {upsert: true});
+        return this.dictionaries.update(selector, document, {upsert: true});
     }
 }
 

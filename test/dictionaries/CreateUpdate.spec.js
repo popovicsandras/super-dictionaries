@@ -5,7 +5,7 @@
 require('mocha-generators').install();
 
 var CreateUpdate = require('../../dictionaries/CreateUpdate'),
-    Dictionaries = require('../../dictionaries/Dictionaries'),
+    dictionaries = require('../../dictionaries/Dictionaries'),
     Q = require('q');
 
 describe('CreateUpdate', function() {
@@ -65,14 +65,14 @@ describe('CreateUpdate', function() {
         beforeEach(function() {
 
             options = {
-                Dictionaries: {
+                dictionaries: {
                     update: function() {
                         updatePromise = Q.defer();
                         return updatePromise.promise;
                     }
                 }
             };
-            sinon.spy(options.Dictionaries, 'update');
+            sinon.spy(options.dictionaries, 'update');
 
             request = {
                 params: {
@@ -109,7 +109,7 @@ describe('CreateUpdate', function() {
 
             dummyApp.makeRequest(request, response);
 
-            expect(options.Dictionaries.update).to.have.been.calledWith(
+            expect(options.dictionaries.update).to.have.been.calledWith(
                 request.params,
                 expectedDocument,
                 {upsert: true}
@@ -187,7 +187,7 @@ describe('CreateUpdate', function() {
         });
 
         afterEach(function* () {
-            yield Dictionaries.remove({
+            yield dictionaries.remove({
                 scope: request.params.scope,
                 uuid: request.params.uuid,
                 name: request.params.name
@@ -195,14 +195,14 @@ describe('CreateUpdate', function() {
         });
 
         function* assertSavedData (request) {
-            var dictionaries = yield Dictionaries.find({
+            var foundDictionaries = yield dictionaries.find({
                 scope: request.params.scope,
                 uuid: request.params.uuid,
                 name: request.params.name
             });
 
-            expect(dictionaries.length).to.be.equal(1);
-            expect(dictionaries[0].content).to.be.eql(request.body.content);
+            expect(foundDictionaries.length).to.be.equal(1);
+            expect(foundDictionaries[0].content).to.be.eql(request.body.content);
         }
 
         it('should save new data to mongo', function* () {
