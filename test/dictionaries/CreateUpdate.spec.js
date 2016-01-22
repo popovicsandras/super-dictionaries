@@ -138,7 +138,7 @@ describe('CreateUpdate', function() {
     });
 
 
-    describe.skip('Learning tests', function() {
+    describe('Learning tests', function() {
 
         var random,
             request,
@@ -165,7 +165,7 @@ describe('CreateUpdate', function() {
             };
 
             sinon.spy(response, 'status');
-
+            createUpdate = new CreateUpdate();
         });
 
         afterEach(function* () {
@@ -184,7 +184,7 @@ describe('CreateUpdate', function() {
             });
 
             expect(dictionaries.length).to.be.equal(1);
-            expect(dictionaries[0].body).to.be.eql(request.body.content);
+            expect(dictionaries[0].content).to.be.eql(request.body.content);
         }
 
         it('should save new data to mongo', function* () {

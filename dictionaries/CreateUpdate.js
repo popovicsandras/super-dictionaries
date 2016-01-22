@@ -1,12 +1,11 @@
 'use strict';
 
-var Dictionaries = require('./Dictionaries'),
-    co = require('co');
+var co = require('co');
 
 class CreateUpdate {
 
     constructor(options) {
-        Dictionaries = options && options.Dictionaries || Dictionaries;
+        this.Dictionaries = options && options.Dictionaries || require('./Dictionaries');
     }
 
     install(app) {
@@ -35,7 +34,7 @@ class CreateUpdate {
                 content: request.body.content
             };
 
-        return Dictionaries.update(selector, document, {upsert: true});
+        return this.Dictionaries.update(selector, document, {upsert: true});
     }
 }
 
