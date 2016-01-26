@@ -5,8 +5,7 @@
 require('mocha-generators').install();
 
 var CreateUpdate = require('../../dictionaries/CreateUpdate'),
-    dictionaries = require('../../dictionaries/Dictionaries'),
-    Q = require('q');
+    dictionaries = require('../../dictionaries/Dictionaries');
 
 describe('CreateUpdate', function() {
 
@@ -60,15 +59,18 @@ describe('CreateUpdate', function() {
 
         var request,
             response,
-            updatePromise;
+            updatePromise,
+            resolveUpdatePromise;
 
         beforeEach(function() {
 
             options = {
                 dictionaries: {
                     update: function() {
-                        updatePromise = Q.defer();
-                        return updatePromise.promise;
+                        updatePromise = new Promise(function(resolve) {
+                            resolveUpdatePromise = resolve;
+                        });
+                        return updatePromise;
                     }
                 }
             };
@@ -134,10 +136,8 @@ describe('CreateUpdate', function() {
 
             dummyApp.makeRequest(request, response);
 
-            // Resolve update promise, to let the generator continue form suspended state
-            updatePromise.resolve();
-            // Dirty hack: with this we can wait until the next queue frame
-            yield Promise.resolve();
+            resolveUpdatePromise();
+            yield updatePromise;
 
             expect(response.status).to.have.been.calledWith(200);
             expect(response.end).to.have.been.called;
