@@ -8,19 +8,29 @@ var GetOne = require('../../dictionaries/GetOne');
 describe('getOne', function () {
 
     var getOne,
-        app;
-
+        app,
+        config,
+        options,
+        request,
+        response,
+        storage;
     
 
     before(function(){
+
         app = {
             get: sinon.spy()
         }
     });
 
     beforeEach(function(){
+        storage = {};
+        config = {};
+        options = {storage: storage};
+        request = {};
+        response = {};
 
-        getOne = new GetOne();
+        getOne = new GetOne(config, options);
 
     });
 
@@ -36,20 +46,24 @@ describe('getOne', function () {
         
     });
     
-    it.only('should install the endpoint2', function() {
+    it('should bind the right context', function() {
         
-    	var method = getOne.processRequest;
-    	console.log(method.bind);
-        var boundMethod = sinon.spy(method.bind);
-        method.bind(this);
-//        getOne.install(app);
+        getOne.processRequest.bind = sinon.spy();
+        
+        getOne.install(app);
 
-        expect(boundMethod).has.been.called;
-//        expect(app.get).has.been.calledWith(
-//			'/api/v1.0/:scope/:uuid/dictionaries/:name.json'
-//    	);
-        
+        expect(getOne.processRequest.bind).has.been.calledWith(app);
     });
+
+    describe('processRequest', function(){
+        it('should invoke willGet', function() {
+            storage.willGet = sinon.spy();
+
+            getOne.processRequest(request, response);
+
+            expect(storage.willGet).has.been.called;
+        });
+    })
     
     
     

@@ -1,6 +1,10 @@
 'use strict';
 
 class GetOne{
+
+  constructor(config, options) {
+      this.storage = options.storage;
+  }
 	
 	install(app) {
         app.get(
@@ -9,8 +13,8 @@ class GetOne{
     		);
     }
 	
-	processRequest(){
-		this.method();
+	processRequest(request, response){
+    this.storage.willGet();
 	}
 	
 }
