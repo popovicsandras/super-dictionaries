@@ -10,10 +10,12 @@ var CreateUpdate = require('../../dictionaries/CreateUpdate'),
 describe('CreateUpdate', function() {
 
     var createUpdate,
+        config,
         options,
         dummyApp;
 
     beforeEach(function() {
+        config = {};
         options = {};
         dummyApp = {
             put: function(endPoint, handler) {
@@ -48,7 +50,7 @@ describe('CreateUpdate', function() {
             options.loggerFactory = loggerFactory;
 
             // Act
-            createUpdate = new CreateUpdate(options);
+            createUpdate = new CreateUpdate(config, options);
 
             // Assert
             expect(loggerFactory.get).to.have.been.calledWith('dictionaries.createupdate');
@@ -106,7 +108,7 @@ describe('CreateUpdate', function() {
                 content: request.body.content
             };
 
-            createUpdate = new CreateUpdate(options);
+            createUpdate = new CreateUpdate(config, options);
             createUpdate.install(dummyApp);
 
             dummyApp.makeRequest(request, response);
@@ -120,7 +122,7 @@ describe('CreateUpdate', function() {
 
         it('should not response until Dictionaries.update finished', function* () {
 
-            createUpdate = new CreateUpdate(options);
+            createUpdate = new CreateUpdate(config, options);
             createUpdate.install(dummyApp);
 
             dummyApp.makeRequest(request, response);
@@ -131,7 +133,7 @@ describe('CreateUpdate', function() {
 
         it('should response with 200 status code only after Dictionaries.update succeeded', function* () {
 
-            createUpdate = new CreateUpdate(options);
+            createUpdate = new CreateUpdate(config, options);
             createUpdate.install(dummyApp);
 
             dummyApp.makeRequest(request, response);
@@ -145,7 +147,7 @@ describe('CreateUpdate', function() {
 
         it('should response with 400 status code if the request parameter are incorrect', function() {
 
-            createUpdate = new CreateUpdate(options);
+            createUpdate = new CreateUpdate(config, options);
             createUpdate.install(dummyApp);
 
             dummyApp.makeRequest({}, response);

@@ -4,7 +4,7 @@ var co = require('co');
 
 class CreateUpdate {
 
-    constructor(options) {
+    constructor(config, options) {
         this.dictionaries = options && options.dictionaries || require('./Dictionaries');
 
         if(options && options.loggerFactory) {
