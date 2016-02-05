@@ -1,45 +1,48 @@
 'use strict';
 
-var _ = require('underscore');
-var SupaDupaMixin = require('../SupaDupaMixin');
+var co = require('co');
 
-class CreateUpdate{
+class CreateUpdate {
 
     constructor(config, options) {
-        _.extend(this, SupaDupaMixin);
-        this.collection = options.collection || this.getCollection();
-        // this.collection = options.collection || [];
-        // console.log('[CreateUpdate] Collection: '+JSON.stringify(this.collection));
+        this.dictionaries = options && options.dictionaries || require('./Dictionaries');
+
+        if(options && options.loggerFactory) {
+            this.log = options.loggerFactory.get('dictionaries.createupdate');
+        } else {
+            var Logger = require('@workshare/ws-logger').Logger;
+            this.log = new Logger();
+        }
     }
 
     install(app) {
-        app.put('/api/:scope/:uuid/dictionaries/:name.json', this._processRequest.bind(this));
+        app.put('/api/:scope/:uuid/dictionaries/:name.json', co.bind(this, this._processRequest));
     }
 
-    _processRequest(request, response) {
-        console.log('in put: ', request.body);
+    * _processRequest(request, response) {
+        try {
+            yield this._save(request);
+            response.status(200).end();
+        } catch (e) {
+            this.log.error(e);
+            response.status(400).end();
+        }
+    }
+
+    _save(request) {
         var selector = {
                 scope: request.params.scope,
                 uuid: request.params.uuid,
                 name: request.params.name
             },
-            dictionary = {
+            document = {
                 scope: request.params.scope,
                 uuid: request.params.uuid,
                 name: request.params.name,
-                body: request.body.content
+                content: request.body.content
             };
 
-        this.collection.update(
-            selector,
-            dictionary,
-            { upsert: true },
-            this._respond.bind(this, response)
-        );
-    }
-
-    _respond(response) {
-        response.status(200).end();
+        return this.dictionaries.update(selector, document, {upsert: true});
     }
 }
 

@@ -9,10 +9,11 @@
     "test": "export NODE_ENV=app-config; mocha 'test/setup.js' 'test/**/**.spec.js'"
   },
   "dependencies": {
-    "@workshare/nodejs-cirrus-auth": "0.0.3",
-    "@workshare/ws-logger": "0.0.1",
+    "@workshare/nodejs-cirrus-auth": "~0.0.5",
+    "@workshare/ws-logger": "~0.0.2",
     "async": "^1.4.2",
     "body-parser": "^1.14.1",
+    "co": "^4.6.0",
     "config": "^1.16.0",
     "cookie-parser": "^1.4.0",
     "express": "^4.13.3",
@@ -30,6 +31,7 @@
     "jshint": "^2.8.0",
     "jshint-stylish": "^2.0.1",
     "mocha": "^2.3.2",
+    "mocha-generators": "^1.2.0",
     "mocha-runner": "^1.1.1",
     "mock-promises": "^0.6.0",
     "nodemon": "^1.6.1",

@@ -5,7 +5,7 @@ var http = require('http');
 var VersionAPI = require('./admin/VersionAPI');
 var Healthcheck = require('./admin/HealthcheckAPI');
 var CreateUpdate = require('./dictionaries/CreateUpdate');
-var Cirrus = require('@workshare/nodejs-cirrus-auth');
+var CirrusMiddleware = require('@workshare/nodejs-cirrus-auth');
 
 var wsLogger = require('@workshare/ws-logger');
 
@@ -30,10 +30,10 @@ class Service {
 
         this.versionAPI  = options.versionAPI || new VersionAPI(config, options);
         this.healthcheckAPI = options.healthcheckAPI || new Healthcheck(config, options);
-        this.cirrusMiddleware = options.cirrusMiddleware || new Cirrus.Middleware(config, options);
+        this.cirrusMiddleware = options.cirrusMiddleware || new CirrusMiddleware(config, options);
         this.ciccioMiddleware = options.ciccioMiddleware || new HelloEndpoint(config, options);
 
-        this.createUpdate = options.createUpdate || new CreateUpdate(config, options);
+        this.createUpdate = options.createUpdate || new CreateUpdate();
         this.delete = options.delete || new HelloEndpoint(config, options);
         this.get = options.get || new HelloEndpoint(config, options);
         this.list = options.list || new HelloEndpoint(config, options);
