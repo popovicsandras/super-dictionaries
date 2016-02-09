@@ -1,8 +1,10 @@
 'use strict';
 
-var Storage = require('../../dictionaries/Storage');
+var Storage = require('../../dictionaries/Storage'),
+	MockPromises = require('mock-promises'),
+	Q = require('q');
 
-describe('Storage', function() {
+describe.only('Storage', function() {
 
     var config,
         monk,
@@ -17,8 +19,14 @@ describe('Storage', function() {
                 url: 'retek'
             }
         };
+        
+        MockPromises.install(Q.makePromise);
     });
 
+    afterEach(function() {
+        MockPromises.reset();
+    });
+    
     describe('Creation', function() {
 
         beforeEach(function() {
@@ -58,12 +66,13 @@ describe('Storage', function() {
 
     describe('willGet', function() {
 
-        var dictionaries;
-
+        var dictionaries,
+        	pretendSuccess,
+        	pretendFailure;
+;
         beforeEach(function() {
-            dictionaries = {
-                findOne: sinon.spy()
-            };
+
+            dictionaries = {};
 
             monk = function() {
                 db = {
@@ -78,11 +87,24 @@ describe('Storage', function() {
             options = {
                 monk: monk
             };
-        });
-
-        it('should invoke the collections\'s proper method with proper parameters' , function() {
 
             storage = new Storage(config, options);
+            
+            dictionaries.findOne = sinon.spy(function() {
+                return {
+                    then: function(callback) {
+                    	pretendSuccess = function() {
+                    		callback();
+                    		MockPromises.tick();
+                    	};
+                    }
+                };
+            });
+
+        });
+
+
+        it('should invoke the collections\'s proper method with proper parameters' , function() {
 
             var selector = {
                 foo: 'bar'
@@ -95,41 +117,20 @@ describe('Storage', function() {
 
         it('should return a promise' , function() {
 
-            storage = new Storage(config, options);
-
-            var selector = {};
-
-            var promise = storage.willGet(selector);
+            var promise = storage.willGet({});
 
             expect(promise).to.respondTo('then');
             expect(promise).to.respondTo('catch');
         });
 
-        it.only('should translate mongo promise result to have catch method', function(done) {
+        it('should invoke success on Q promise when findOne succeeds', function() {
 
-            storage = new Storage(config, options);
+            var success = sinon.spy() 
+            storage.willGet({}).then(success())
 
-            var successCallback,
-                findOneFunction = function() {
-                    return {
-                        then: function(successCb) {
-                            successCallback = successCb;
-                        }
-                    };
-                };
+            pretendSuccess();
 
-            dictionaries.findOne = findOneFunction;
-
-            var promise = storage.willGet({});
-            sinon.spy(promise, 'then');
-
-            successCallback();
-
-            setTimeout(function() {
-                expect(promise.then).to.have.been.called;
-                done();
-            }, 0);
-
+            expect(success).to.have.been.called;
         });
 
     });
