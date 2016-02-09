@@ -25,7 +25,7 @@ class CreateUpdate {
             response.status(200).end();
         } catch (e) {
             this.log.error(e);
-            response.status(400).end();
+            response.status(500).end();
         }
     }
 
