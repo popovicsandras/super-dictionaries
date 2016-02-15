@@ -4,7 +4,7 @@ var Storage = require('../../dictionaries/Storage'),
 	MockPromises = require('mock-promises'),
 	Q = require('q');
 
-describe.only('Storage', function() {
+describe('Storage', function() {
 
     var config,
         monk,
@@ -19,14 +19,14 @@ describe.only('Storage', function() {
                 url: 'retek'
             }
         };
-        
+
         MockPromises.install(Q.makePromise);
     });
 
     afterEach(function() {
         MockPromises.reset();
     });
-    
+
     describe('Creation', function() {
 
         beforeEach(function() {
@@ -51,14 +51,14 @@ describe.only('Storage', function() {
             };
             sinon.spy(options, 'monk');
 
-            var storage = new Storage(config, options);
+            new Storage(config, options);
 
             expect(options.monk).to.have.been.calledWith('retek');
         });
 
         it('should get the proper collection from database', function() {
 
-            var storage = new Storage(config, {monk: monk});
+            new Storage(config, {monk: monk});
 
             expect(db.get).to.have.been.calledWith('dictionaries');
         });
@@ -89,7 +89,7 @@ describe.only('Storage', function() {
             };
 
             storage = new Storage(config, options);
-            
+
             dictionaries.findOne = sinon.spy(function() {
                 return {
                     then: function(callback) {
@@ -102,7 +102,6 @@ describe.only('Storage', function() {
             });
 
         });
-
 
         it('should invoke the collections\'s proper method with proper parameters' , function() {
 
@@ -125,13 +124,12 @@ describe.only('Storage', function() {
 
         it('should invoke success on Q promise when findOne succeeds', function() {
 
-            var success = sinon.spy() 
-            storage.willGet({}).then(success())
+            var success = sinon.spy();
+            storage.willGet({}).then(success());
 
             pretendSuccess();
 
             expect(success).to.have.been.called;
         });
-
     });
 });

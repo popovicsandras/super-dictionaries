@@ -152,7 +152,7 @@ describe('CreateUpdate', function() {
 
             dummyApp.makeRequest({}, response);
 
-            expect(response.status).to.have.been.calledWith(400);
+            expect(response.status).to.have.been.calledWith(500);
             expect(response.end).to.have.been.called;
         });
     });
