@@ -125,7 +125,7 @@ describe('Storage', function() {
         it('should invoke success on Q promise when findOne succeeds', function() {
 
             var success = sinon.spy();
-            storage.willGet({}).then(success());
+            storage.willGet({}).then(success);
 
             pretendSuccess();
 
